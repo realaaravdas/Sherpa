@@ -1,0 +1,6 @@
+{
+  "greenhouse": ["nextdoor","dropbox","airtable","discord","carta","squarespace","figma","chime","vercel","robinhood","asana","duolingo","gitlab","airbnb","gusto","fivetran","sofi","flexport","pinterest","scaleai","affirm","samsara","coinbase","brex","reddit","lyft","instacart","twilio","zscaler","elastic","stripe","cloudflare","okta","anthropic","datadog","databricks","mongodb"],
+  "ashby": ["clerk","runway","posthog","linear","modal","supabase","replit","cursor","vanta","perplexity","cohere","elevenlabs","notion","ramp","sierra","harvey","openai"],
+  "lever": ["palantir","spotify","zoox","wealthfront"],
+  "names": { "openai": "OpenAI", "posthog": "PostHog", "elevenlabs": "ElevenLabs", "scaleai": "Scale AI", "gitlab": "GitLab", "mongodb": "MongoDB", "sofi": "SoFi", "cursor": "Cursor (Anysphere)", "doordash": "DoorDash", "datadog": "Datadog" }
+}

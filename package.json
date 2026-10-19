@@ -1,0 +1,26 @@
+{
+  "name": "sherpa",
+  "version": "1.0.0",
+  "description": "Sherpa — an AI job-search copilot: multi-source job scraping, smart matching, and an application tracker.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "NODE_USE_ENV_PROXY=1 node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "NODE_USE_ENV_PROXY=1 node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test tests/*.test.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@node-rs/argon2": "^2.2.2",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
+    "cheerio": "^1.2.0",
+    "express": "^5.3.0",
+    "mammoth": "^1.13.0",
+    "undici": "^8.12.2",
+    "unpdf": "^1.9.1"
+  }
+}
