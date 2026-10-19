@@ -10,18 +10,18 @@ export async function apiFetch(url, { json = true, headers = {}, timeoutMs = 200
   let lastErr;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const res = await fetch(url, {
+      const res = await withDeadline(fetch(url, {
         method, body,
         headers: { 'user-agent': UA, accept: json ? 'application/json' : '*/*', ...headers },
         signal: AbortSignal.timeout(timeoutMs),
-      });
+      }), timeoutMs + 2000, 'request');
       if (res.status === 404) { const e = new Error('not found (404)'); e.status = 404; e.fatal = true; throw e; }
       if (res.status === 429 || res.status >= 500) {
         const retryAfter = Number(res.headers.get('retry-after')) || 0;
         const e = new Error(`HTTP ${res.status}`); e.status = res.status; e.retryAfter = retryAfter; throw e;
       }
       if (!res.ok) { const e = new Error(`HTTP ${res.status}`); e.status = res.status; e.fatal = true; throw e; }
-      return json ? await res.json() : await res.text();
+      return await withDeadline(json ? res.json() : res.text(), timeoutMs + 2000, 'response body');
     } catch (e) {
       lastErr = e;
       if (e.fatal || attempt === retries) break;
@@ -30,6 +30,11 @@ export async function apiFetch(url, { json = true, headers = {}, timeoutMs = 200
   }
   throw lastErr;
 }
+/** Hard deadline that doesn't depend on the underlying socket honouring an abort signal. */
+export const withDeadline = (promise, ms, label = 'operation') => new Promise((resolve, reject) => {
+  const t = setTimeout(() => reject(new Error(`${label} timed out after ${Math.round(ms / 1000)}s`)), ms);
+  promise.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+});
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* ───────── SSRF-safe fetch for user supplied URLs ───────── */

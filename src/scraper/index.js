@@ -1,7 +1,7 @@
 import { db, tx } from '../db.js';
 import { config } from '../config.js';
 import { COMPANIES, runAdapter, isComplete, aggregators, sourceKey } from './adapters.js';
-import { pool } from './http.js';
+import { pool, withDeadline } from './http.js';
 
 const MAX_FAILURES = 6;
 const PRIORITY = { greenhouse: 5, lever: 5, ashby: 5, workable: 5, recruitee: 5, smartrecruiters: 5, page: 4, hackernews: 1 }; // ATS links beat aggregator links
@@ -71,7 +71,7 @@ export async function scrapeSource({ kind, arg }) {
   const h = health.get.get(key);
   if (h?.disabled && start - h.last_run < 24 * 3_600_000) return { key, skipped: 'disabled after repeated failures' };
   try {
-    const jobs = (await runAdapter(kind, arg)).filter(Boolean);
+    const jobs = (await withDeadline(runAdapter(kind, arg), 180_000, 'source')).filter(Boolean);
     let added = 0, updated = 0, expired = 0;
     tx(() => {
       for (const j of jobs) { if (upsertJob(j, start) === 'added') added++; else updated++; }
